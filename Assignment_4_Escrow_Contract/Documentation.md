@@ -2,7 +2,7 @@
 
 ## Student Information
 - Name: Benjamin Ghajiga
-- Date: 29-12-2025
+- Date: 30-12-2025
 
 ## Contract Overview
 The Simple Escrow Contract is a trustless two-party escrow service that facilitates secure transactions between buyers and sellers on the Stacks blockchain. When a buyer creates an escrow, their STX funds are held securely by the smart contract until they either release payment to the seller (upon satisfactory delivery) or request a refund. This protects both parties: sellers are assured that payment is secured, and buyers can recover funds if goods or services aren't delivered as agreed.

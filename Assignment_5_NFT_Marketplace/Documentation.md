@@ -2,7 +2,7 @@
 
 ## Student Information
 - Name: Benjamin Ghajiga
-- Date: 29-12-2025
+- Date: 30-12-2025
 
 ## Contract Overview
 The NFT Marketplace is a decentralized exchange platform for trading SIP-009 compliant NFTs on the Stacks blockchain. Users can list their NFTs for sale, browse and purchase listed NFTs, cancel their listings, and update prices for active listings. The marketplace acts as an escrow service, holding NFTs until they are sold or cancelled, and automatically handles payment distribution including marketplace fees. The contract supports any NFT collection that implements the SIP-009 standard trait, making it a universal marketplace solution.

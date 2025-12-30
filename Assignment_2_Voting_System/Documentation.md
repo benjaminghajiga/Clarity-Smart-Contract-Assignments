@@ -2,7 +2,7 @@
 
 ## Student Information
 - Name: Benjamin Ghajiga
-- Date: 29-12-2025
+- Date: 30-12-2025
 
 ## Contract Overview
 The Simple Voting System is a decentralized voting contract that allows users to create proposals and vote on them in a transparent, tamper-proof manner. Each proposal has a defined voting period measured in blocks, and each user can cast exactly one vote (yes or no) per proposal. The contract prevents double-voting, tracks vote tallies in real-time, and enforces voting deadlines automatically based on block height.

@@ -1,8 +1,8 @@
 # Assignment 1: Hello World Registry
 
 ## Student Information
-- Name: [Benjamin Ghajiga]
-- Date: [December 29 2025]
+- Name: Benjamin Ghajiga
+- Date: 30-12-2025
 
 ## Contract Overview
 The Hello World Registry is a simple smart contract that allows users to store, retrieve, and delete personalized greeting messages on the Stacks blockchain. Each user is identified by their principal address and can manage their own message independently. Messages are stored in a map data structure with a maximum length of 500 UTF-8 characters.
