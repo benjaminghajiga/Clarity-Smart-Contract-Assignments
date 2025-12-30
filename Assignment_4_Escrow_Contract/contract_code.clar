@@ -10,7 +10,7 @@
 (define-constant STATUS-REFUNDED u3)
 
 ;; Data Maps
-;; TODO: Define map for escrow details
+;; Map for escrow details
 (define-map escrows 
     uint 
     {
@@ -33,8 +33,10 @@
 
 ;; Check if caller is the buyer of an escrow
 (define-private (is-buyer (escrow-id uint) (caller principal))
-    ;; TODO: Get escrow and check if caller matches buyer
-    false
+    (match (map-get? escrows escrow-id)
+        escrow (is-eq caller (get buyer escrow))
+        false
+    )
 )
 
 ;; Public Functions
@@ -48,11 +50,24 @@
         (
             (escrow-id (+ (var-get escrow-count) u1))
         )
-        ;; TODO: Validate amount > 0
-        ;; TODO: Transfer STX from buyer to this contract
-        ;; TODO: Store escrow data with STATUS-PENDING
-        ;; TODO: Increment escrow-count
+        ;; Validate amount > 0
+        (asserts! (> amount u0) ERR-INVALID-AMOUNT)
+        
+        ;; Transfer STX from buyer to this contract
+        (unwrap! (stx-transfer? amount tx-sender (as-contract tx-sender)) ERR-TRANSFER-FAILED)
+        
+        ;; Store escrow data with STATUS-PENDING
+        (map-set escrows escrow-id {
+            buyer: tx-sender,
+            seller: seller,
+            amount: amount,
+            status: STATUS-PENDING,
+            created-at: block-height
+        })
+        
+        ;; Increment escrow-count
         (var-set escrow-count escrow-id)
+        
         (ok escrow-id)
     )
 )
@@ -64,11 +79,21 @@
     (let
         (
             (escrow (unwrap! (map-get? escrows escrow-id) ERR-NOT-FOUND))
+            (seller (get seller escrow))
+            (amount (get amount escrow))
         )
-        ;; TODO: Verify caller is buyer
-        ;; TODO: Verify status is pending
-        ;; TODO: Transfer STX from contract to seller
-        ;; TODO: Update escrow status to COMPLETED
+        ;; Verify caller is buyer
+        (asserts! (is-eq tx-sender (get buyer escrow)) ERR-NOT-BUYER)
+        
+        ;; Verify status is pending
+        (asserts! (is-eq (get status escrow) STATUS-PENDING) ERR-NOT-PENDING)
+        
+        ;; Transfer STX from contract to seller
+        (unwrap! (as-contract (stx-transfer? amount tx-sender seller)) ERR-TRANSFER-FAILED)
+        
+        ;; Update escrow status to COMPLETED
+        (map-set escrows escrow-id (merge escrow {status: STATUS-COMPLETED}))
+        
         (ok true)
     )
 )
@@ -80,11 +105,21 @@
     (let
         (
             (escrow (unwrap! (map-get? escrows escrow-id) ERR-NOT-FOUND))
+            (buyer (get buyer escrow))
+            (amount (get amount escrow))
         )
-        ;; TODO: Verify caller is buyer
-        ;; TODO: Verify status is pending
-        ;; TODO: Transfer STX from contract back to buyer
-        ;; TODO: Update escrow status to REFUNDED
+        ;; Verify caller is buyer
+        (asserts! (is-eq tx-sender buyer) ERR-NOT-BUYER)
+        
+        ;; Verify status is pending
+        (asserts! (is-eq (get status escrow) STATUS-PENDING) ERR-NOT-PENDING)
+        
+        ;; Transfer STX from contract back to buyer
+        (unwrap! (as-contract (stx-transfer? amount tx-sender buyer)) ERR-TRANSFER-FAILED)
+        
+        ;; Update escrow status to REFUNDED
+        (map-set escrows escrow-id (merge escrow {status: STATUS-REFUNDED}))
+        
         (ok true)
     )
 )
@@ -95,8 +130,8 @@
 ;; @param escrow-id: the escrow to look up
 ;; @returns escrow data or none
 (define-read-only (get-escrow (escrow-id uint))
-    ;; TODO: Return escrow data
-    none
+    ;; Return escrow data
+    (map-get? escrows escrow-id)
 )
 
 ;; Get total number of escrows created
